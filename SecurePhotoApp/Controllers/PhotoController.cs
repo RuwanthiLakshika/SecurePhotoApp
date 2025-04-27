@@ -1,45 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SecurePhotoApp.Models;
 using Azure.Storage.Blobs;
+using Azure.Identity;  
 
 namespace SecurePhotoApp.Controllers
 {
     public class PhotoController : Controller
     {
-        private string BlobConnectionString = "DefaultEndpointsProtocol=https;AccountName=photostorageaccount;AccountKey=HwyYcCSBPPygXUjgM76mvv3hmGS0JuZTAK5cPBy/inRE1N2/TMEodavuPUsbVIDp2nas2aFmrrXA+AStAzs20g==;EndpointSuffix=core.windows.net";
-        private string ContainerName = "photocontainer";
+        private readonly string storageAccountName = "photostorageaccount";
+        private readonly string containerName = "photocontainer";
 
         public IActionResult Add()
         {
             return View();
         }
-
         [HttpPost]
-        public IActionResult UploadFile(PhotoVM model)
+        public async Task<IActionResult> UploadFile(PhotoVM model)
         {
             try
             {
-                var filename = GenerateFileName(model.myFile.FileName, model.myFile.FileName);
+                var username = User.Identity.Name ?? "user"; 
+                var filename = GenerateFileName(model.myFile.FileName, username);
+
                 var fileUrl = "";
-                BlobContainerClient container = new BlobContainerClient(BlobConnectionString, ContainerName);
-                try
+
+                var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
+                BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+
+                BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+                await container.CreateIfNotExistsAsync();
+
+                BlobClient blob = container.GetBlobClient(filename);
+
+                using (Stream stream = model.myFile.OpenReadStream())
                 {
-                    BlobClient blob = container.GetBlobClient(filename);
-                    using (Stream stream = model.myFile.OpenReadStream())
-                    {
-                        blob.Upload(stream);
-                    }
-                    fileUrl = blob.Uri.AbsoluteUri;
+                    await blob.UploadAsync(stream);
                 }
-                catch (Exception ex) { }
-                var result = fileUrl;
-                return Ok(result);
+
+                fileUrl = blob.Uri.AbsoluteUri;
+                return Ok(fileUrl);
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
+
 
         private string GenerateFileName(string fileName, string CustomerName)
         {
@@ -55,7 +61,5 @@ namespace SecurePhotoApp.Controllers
                 return fileName;
             }
         }
-
-
     }
 }
