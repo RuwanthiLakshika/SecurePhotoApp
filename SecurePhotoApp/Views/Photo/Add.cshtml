@@ -4,18 +4,20 @@
     ViewData["Title"] = "CreateProfile";
 }
 
-<h1>Upload File to Blob Storage</h1>
+<h1>Upload Files to Blob Storage</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-controller="Photo" asp-action="UploadFile" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
-                <label for="File" class="control-label" style="font-weight:bold">File</label>
-                <input asp-for="myFile" type="file" class="form-control" />
+                <label for="myFiles" class="control-label" style="font-weight:bold">Select Files</label>
+                <input asp-for="myFiles" type="file" class="form-control" multiple />
             </div>
-            <div class="form-group">
-                <button type="submit">Upload File</button>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Upload Files</button>
             </div>
         </form>
     </div>

@@ -1,8 +1,10 @@
-﻿namespace SecurePhotoApp.Models
+﻿
+namespace SecurePhotoApp.Models
 {
     public class PhotoVM
     {
-        public IFormFile myFile { get; set; }
- 
+        public List<IFormFile> myFiles { get; set; }
+
     }
+
 }
