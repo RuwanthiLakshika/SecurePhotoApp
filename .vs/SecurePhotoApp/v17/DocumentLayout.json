@@ -1,7 +1,52 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\my work\\repositories\\SecurePhotoApp\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\controllers\\photocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\controllers\\photocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\views\\photo\\add.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\views\\photo\\add.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\models\\photovm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\models\\photovm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|d:\\my work\\repositories\\securephotoapp\\securephotoapp\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA716CC0-1603-48FD-9B91-AF56884CB4BF}|SecurePhotoApp\\SecurePhotoApp.csproj|solutionrelative:securephotoapp\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -18,6 +63,140 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-28T04:05:02.151Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACYBAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-28T03:41:59.33Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAOkAAAAAAAAAAAAYwP0AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-28T03:41:44.71Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\_ViewStart.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-25T13:53:55.64Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\_ViewImports.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-25T13:53:52.882Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Add.cshtml",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Photo\\Add.cshtml",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Views\\Photo\\Add.cshtml",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Views\\Photo\\Add.cshtml",
+              "RelativeToolTip": "SecurePhotoApp\\Views\\Photo\\Add.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-25T13:13:37.53Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "SecurePhotoApp\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-24T15:22:16.646Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Program.cs",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Program.cs",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Program.cs",
+              "RelativeToolTip": "SecurePhotoApp\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-24T14:58:46.216Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\appsettings.json",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\appsettings.json",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\appsettings.json",
+              "RelativeToolTip": "SecurePhotoApp\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-24T14:58:29.022Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PhotoController.cs",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Controllers\\PhotoController.cs",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Controllers\\PhotoController.cs",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Controllers\\PhotoController.cs",
+              "RelativeToolTip": "SecurePhotoApp\\Controllers\\PhotoController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAADYAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T12:55:23.119Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PhotoVM.cs",
+              "DocumentMoniker": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Models\\PhotoVM.cs",
+              "RelativeDocumentMoniker": "SecurePhotoApp\\Models\\PhotoVM.cs",
+              "ToolTip": "D:\\my work\\repositories\\SecurePhotoApp\\SecurePhotoApp\\Models\\PhotoVM.cs",
+              "RelativeToolTip": "SecurePhotoApp\\Models\\PhotoVM.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T13:22:31.31Z"
             }
           ]
         }
