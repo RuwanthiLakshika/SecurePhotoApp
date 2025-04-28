@@ -1,0 +1,113 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "Upload Successful";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-check-circle-fill" style="font-size: 3rem; color: #10b981;"></i>
+                        <h2 class="mt-3">Upload Successful!</h2>
+                        <p class="text-muted">Your photos have been securely uploaded</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        @foreach (var url in Model)
+                        {
+                            <div class="col-md-4 col-sm-6 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="position-relative">
+                                        <img src="@url" class="card-img-top" alt="Uploaded photo" style="height: 200px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <a href="@url" target="_blank" class="btn btn-sm btn-light rounded-circle" title="View full image">
+                                                <i class="bi bi-arrows-fullscreen"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted small">
+                                                @System.IO.Path.GetFileName(new Uri(url).AbsolutePath)
+                                            </span>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light rounded-circle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                                    <li><a class="dropdown-item" href="@url" download><i class="bi bi-download me-2"></i>Download</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="copyToClipboard('@url')"><i class="bi bi-link-45deg me-2"></i>Copy Link</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="Photo" asp-action="Add" class="btn btn-outline-primary">
+                            <i class="bi bi-cloud-arrow-up me-2"></i>Upload More Photos
+                        </a>
+                        <a asp-controller="Photos" asp-action="Gallery" class="btn btn-primary">
+                            <i class="bi bi-grid-3x3 me-2"></i>Go to Gallery
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showToast('Link copied to clipboard!');
+            }, function() {
+                
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Link copied to clipboard!');
+            });
+        }
+
+        function showToast(message) {
+            const toastContainer = document.createElement('div');
+            toastContainer.style.position = 'fixed';
+            toastContainer.style.bottom = '20px';
+            toastContainer.style.right = '20px';
+            toastContainer.style.zIndex = '9999';
+
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+
+            const toastBody = document.createElement('div');
+            toastBody.className = 'toast-body d-flex align-items-center';
+            toastBody.innerHTML = `
+                <i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color)"></i>
+                ${message}
+            `;
+
+            toast.appendChild(toastBody);
+            toastContainer.appendChild(toast);
+            document.body.appendChild(toastContainer);
+
+            setTimeout(() => {
+                toastContainer.remove();
+            }, 3000);
+        }
+    </script>
+}

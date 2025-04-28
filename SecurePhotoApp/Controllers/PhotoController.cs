@@ -43,7 +43,7 @@ namespace SecurePhotoApp.Controllers
                     uploadedUrls.Add(blob.Uri.AbsoluteUri);
                 }
 
-                return Ok(uploadedUrls);  
+                return View("UploadSuccess", uploadedUrls);
             }
             catch (Exception ex)
             {
