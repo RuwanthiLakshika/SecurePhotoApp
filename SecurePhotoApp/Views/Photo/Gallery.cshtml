@@ -1,0 +1,325 @@
+﻿@model SecurePhotoApp.Models.GalleryVM
+@{
+    ViewData["Title"] = "My Photo Gallery";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-lg-3 col-xl-2 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-3">My Gallery</h5>
+
+                    <form asp-action="Gallery" method="get" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" name="searchTerm" class="form-control" placeholder="Search photos..." value="@Model.SearchTerm">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Sort by</h6>
+                        <div class="d-grid gap-2">
+                            <a asp-action="Gallery" asp-route-searchTerm="@Model.SearchTerm" asp-route-sortOrder="newest"
+                               class="btn @(Model.SortOrder == "newest" ? "btn-primary" : "btn-outline-secondary") btn-sm text-start">
+                                <i class="bi bi-calendar-minus me-2"></i>Newest first
+                            </a>
+                            <a asp-action="Gallery" asp-route-searchTerm="@Model.SearchTerm" asp-route-sortOrder="oldest"
+                               class="btn @(Model.SortOrder == "oldest" ? "btn-primary" : "btn-outline-secondary") btn-sm text-start">
+                                <i class="bi bi-calendar-plus me-2"></i>Oldest first
+                            </a>
+                            <a asp-action="Gallery" asp-route-searchTerm="@Model.SearchTerm" asp-route-sortOrder="name"
+                               class="btn @(Model.SortOrder == "name" ? "btn-primary" : "btn-outline-secondary") btn-sm text-start">
+                                <i class="bi bi-sort-alpha-down me-2"></i>Name
+                            </a>
+                            <a asp-action="Gallery" asp-route-searchTerm="@Model.SearchTerm" asp-route-sortOrder="size"
+                               class="btn @(Model.SortOrder == "size" ? "btn-primary" : "btn-outline-secondary") btn-sm text-start">
+                                <i class="bi bi-arrow-down-square me-2"></i>Size (largest)
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Stats</h6>
+                        <div class="card bg-light border-0">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Total photos</span>
+                                    <span class="badge bg-primary">@Model.Photos.Count</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Total size</span>
+                                    <span class="badge bg-primary">@(Model.Photos.Sum(p => p.Size) / (1024 * 1024)) MB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <a asp-controller="Photo" asp-action="Add" class="btn btn-primary">
+                            <i class="bi bi-cloud-arrow-up me-2"></i>Upload Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-xl-10">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted me-2">View:</span>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="gridView">
+                                    <i class="bi bi-grid-3x3"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" id="listView">
+                                    <i class="bi bi-list-ul"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-muted me-2">Showing @Model.Photos.Count photos</span>
+                            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                            {
+                                <span class="badge bg-primary">Filtered by: @Model.SearchTerm</span>
+                                <a asp-action="Gallery" class="btn btn-sm btn-outline-danger ms-2">
+                                    <i class="bi bi-x-circle"></i> Clear
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!Model.Photos.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-images" style="font-size: 4rem; color: var(--light-text);"></i>
+                    <h4 class="mt-3">No photos found</h4>
+                    <p class="text-muted">
+                        @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                        {
+                            <span>No photos match your search criteria.</span>
+                        }
+                        else
+                        {
+                            <span>You haven't uploaded any photos yet.</span>
+                        }
+                    </p>
+                    <a asp-controller="Photo" asp-action="Add" class="btn btn-primary mt-3">
+                        <i class="bi bi-cloud-arrow-up me-2"></i>Upload Your First Photo
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div id="gridViewContainer">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-4">
+                        @foreach (var photo in Model.Photos)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm border-0 photo-card">
+                                    <div class="position-relative">
+                                        <img src="@photo.Url" class="card-img-top" alt="@photo.FileName" loading="lazy" style="height: 200px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a class="dropdown-item" href="@photo.Url" target="_blank">
+                                                            <i class="bi bi-arrows-fullscreen me-2"></i>View Full Size
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="@photo.Url" download>
+                                                            <i class="bi bi-download me-2"></i>Download
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="copyToClipboard('@photo.Url'); return false;">
+                                                            <i class="bi bi-link-45deg me-2"></i>Copy Link
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <button class="dropdown-item text-danger"
+                                                                onclick="confirmDelete('@photo.Name', '@photo.FileName')">
+                                                            <i class="bi bi-trash me-2"></i>Delete
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title text-truncate">@photo.FileName</h6>
+                                        <p class="card-text mb-0 text-muted small">
+                                            <i class="bi bi-clock me-1"></i>@photo.TimeAgo
+                                        </p>
+                                        <p class="card-text text-muted small">
+                                            <i class="bi bi-file-earmark me-1"></i>@photo.FormattedSize
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div id="listViewContainer" style="display: none;">
+                    <div class="card shadow-sm border-0">
+                        <div class="list-group list-group-flush">
+                            @foreach (var photo in Model.Photos)
+                            {
+                                <div class="list-group-item d-flex align-items-center p-3">
+                                    <div class="flex-shrink-0 me-3">
+                                        <img src="@photo.Url" alt="@photo.FileName" class="rounded" style="height: 50px; width: 50px; object-fit: cover;">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">@photo.FileName</h6>
+                                        <div class="d-flex text-muted small mt-1">
+                                            <span class="me-3"><i class="bi bi-clock me-1"></i>@photo.TimeAgo</span>
+                                            <span><i class="bi bi-file-earmark me-1"></i>@photo.FormattedSize</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <div class="btn-group">
+                                            <a href="@photo.Url" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@photo.Url" download class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    onclick="confirmDelete('@photo.Name', '@photo.FileName')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="fileName"></strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" id="photoId" name="id" value="">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle between grid and list view
+        document.getElementById('gridView').addEventListener('click', function() {
+            document.getElementById('gridViewContainer').style.display = 'block';
+            document.getElementById('listViewContainer').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('listView').classList.remove('active');
+        });
+
+        document.getElementById('listView').addEventListener('click', function() {
+            document.getElementById('gridViewContainer').style.display = 'none';
+            document.getElementById('listViewContainer').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('gridView').classList.remove('active');
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showToast('Link copied to clipboard!');
+            }, function() {
+                // Fallback for browsers that don't support clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Link copied to clipboard!');
+            });
+        }
+
+        function showToast(message) {
+            // Create toast element
+            const toastContainer = document.createElement('div');
+            toastContainer.style.position = 'fixed';
+            toastContainer.style.bottom = '20px';
+            toastContainer.style.right = '20px';
+            toastContainer.style.zIndex = '9999';
+
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+
+            const toastBody = document.createElement('div');
+            toastBody.className = 'toast-body d-flex align-items-center';
+            toastBody.innerHTML = `
+                <i class="bi bi-check-circle-fill me-2" style="color: var(--primary-color)"></i>
+                ${message}
+            `;
+
+            toast.appendChild(toastBody);
+            toastContainer.appendChild(toast);
+            document.body.appendChild(toastContainer);
+
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toastContainer.remove();
+            }, 3000);
+        }
+
+        // Delete confirmation
+        function confirmDelete(photoId, fileName) {
+            document.getElementById('photoId').value = photoId;
+            document.getElementById('fileName').textContent = fileName;
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+    </script>
+}

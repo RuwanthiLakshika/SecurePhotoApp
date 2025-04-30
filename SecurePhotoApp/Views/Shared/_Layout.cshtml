@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SecurePhotoApp</title>
+    <title>@(ViewData["Title"] ?? "SecurePhotoApp") - SecurePhotoApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SecurePhotoApp.styles.css" asp-append-version="true" />
@@ -88,20 +88,6 @@
                 box-shadow: 0 5px 15px rgba(58, 71, 213, 0.3);
             }
 
-        .btn-outline-primary {
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 500;
-            padding: 0.5rem 1.5rem;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-            .btn-outline-primary:hover {
-                background-color: rgba(58, 71, 213, 0.05);
-                transform: translateY(-2px);
-            }
-
         footer {
             background-color: white;
             padding: 2rem 0;
@@ -118,57 +104,6 @@
             .footer-link:hover {
                 color: var(--accent-color);
             }
-
-        .footer-column h5 {
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            color: var(--dark-text);
-        }
-
-        .footer-column ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .footer-column li {
-            margin-bottom: 0.75rem;
-        }
-
-        .social-icon {
-            font-size: 1.25rem;
-            margin-right: 1rem;
-            color: var(--light-text);
-            transition: all 0.2s ease;
-        }
-
-            .social-icon:hover {
-                color: var(--primary-color);
-            }
-
-        .dropdown-menu {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .dropdown-item {
-            padding: 0.6rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-            .dropdown-item:hover {
-                background-color: rgba(58, 71, 213, 0.05);
-                color: var(--primary-color);
-            }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 0.5rem;
-        }
 
         #notification-badge {
             position: absolute;
@@ -196,18 +131,18 @@
                 <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
                                asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Photo" && ViewContext.RouteData.Values["Action"].ToString() == "Add" ? "active" : "")"
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Photo" && ViewContext.RouteData.Values["Action"]?.ToString() == "Add" ? "active" : "")"
                                asp-area="" asp-controller="Photo" asp-action="Add">
                                 <i class="bi bi-cloud-arrow-up me-1"></i>Upload
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Photos" && ViewContext.RouteData.Values["Action"].ToString() == "Gallery" ? "active" : "")"
-                               asp-area="" asp-controller="Photos" asp-action="Gallery">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Photo" && ViewContext.RouteData.Values["Action"]?.ToString() == "Gallery" ? "active" : "")"
+                               asp-area="" asp-controller="Photo" asp-action="Gallery">
                                 <i class="bi bi-grid-3x3 me-1"></i>Gallery
                             </a>
                         </li>
@@ -287,10 +222,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-     
         document.addEventListener('DOMContentLoaded', function() {
-           
-            const hasNotifications = true; 
+            const hasNotifications = true;
             if (hasNotifications) {
                 document.getElementById('notification-badge').style.display = 'block';
             } else {
