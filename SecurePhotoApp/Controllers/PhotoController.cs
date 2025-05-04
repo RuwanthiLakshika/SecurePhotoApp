@@ -21,7 +21,7 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";  
+                //var username = User.Identity.Name ?? "user";  
                 var uploadedUrls = new List<string>();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
@@ -33,7 +33,7 @@ namespace SecurePhotoApp.Controllers
 
                 foreach (var file in model.myFiles)
                 {
-                    var filename = GenerateFileName(file.FileName, username);
+                    var filename = GenerateFileName(file.FileName, file.FileName);
                     BlobClient blob = container.GetBlobClient(filename);
 
                     using (var stream = file.OpenReadStream())
@@ -52,13 +52,13 @@ namespace SecurePhotoApp.Controllers
             }
         }
 
-        private string GenerateFileName(string fileName, string customerName)
+        private string GenerateFileName(string fileName, string displayName)
         {
             try
             {
                 string[] strName = fileName.Split('.');
                 string extension = strName[^1]; 
-                string newFileName = customerName + DateTime.UtcNow.ToString("yyyyMMdd\\THHmmssfff") + "." + extension;
+                string newFileName = displayName + DateTime.UtcNow.ToString("yyyyMMdd\\THHmmssfff") + "." + extension;
                 return newFileName;
             }
             catch (Exception)
@@ -134,6 +134,35 @@ namespace SecurePhotoApp.Controllers
             catch (Exception ex)
             {
                 return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(string blobName)
+        {
+            try
+            {
+                var username = User.Identity.Name ?? "user";
+
+                if (!blobName.StartsWith(username))
+                {
+                    return Forbid();
+                }
+
+                var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
+
+                BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+
+                BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+
+                BlobClient blob = container.GetBlobClient(blobName);
+                await blob.DeleteIfExistsAsync();
+
+                return RedirectToAction("Gallery");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

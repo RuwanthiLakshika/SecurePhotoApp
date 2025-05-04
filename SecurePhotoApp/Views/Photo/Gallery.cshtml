@@ -228,7 +228,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -241,8 +240,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" asp-action="Delete" method="post">
-                    <input type="hidden" id="photoId" name="id" value="">
+                <form id="deleteForm" asp-controller="Photo" asp-action="DeletePhoto" method="post">
+                    <input type="hidden" id="blobName" name="blobName" value="">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
@@ -252,7 +251,6 @@
 
 @section Scripts {
     <script>
-        // Toggle between grid and list view
         document.getElementById('gridView').addEventListener('click', function() {
             document.getElementById('gridViewContainer').style.display = 'block';
             document.getElementById('listViewContainer').style.display = 'none';
@@ -267,12 +265,10 @@
             document.getElementById('gridView').classList.remove('active');
         });
 
-        // Copy to clipboard function
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(function() {
                 showToast('Link copied to clipboard!');
             }, function() {
-                // Fallback for browsers that don't support clipboard API
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -284,7 +280,6 @@
         }
 
         function showToast(message) {
-            // Create toast element
             const toastContainer = document.createElement('div');
             toastContainer.style.position = 'fixed';
             toastContainer.style.bottom = '20px';
@@ -308,15 +303,13 @@
             toastContainer.appendChild(toast);
             document.body.appendChild(toastContainer);
 
-            // Remove toast after 3 seconds
             setTimeout(() => {
                 toastContainer.remove();
             }, 3000);
         }
 
-        // Delete confirmation
-        function confirmDelete(photoId, fileName) {
-            document.getElementById('photoId').value = photoId;
+            function confirmDelete(photoId, fileName) {
+            document.getElementById('blobName').value = photoId;
             document.getElementById('fileName').textContent = fileName;
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
