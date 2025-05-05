@@ -21,7 +21,7 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                //var username = User.Identity.Name ?? "user";  
+                var username = User.Identity.Name ?? "user";  
                 var uploadedUrls = new List<string>();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
@@ -33,7 +33,7 @@ namespace SecurePhotoApp.Controllers
 
                 foreach (var file in model.myFiles)
                 {
-                    var filename = GenerateFileName(file.FileName, file.FileName);
+                    var filename = GenerateFileName(file.FileName, username);
                     BlobClient blob = container.GetBlobClient(filename);
 
                     using (var stream = file.OpenReadStream())
