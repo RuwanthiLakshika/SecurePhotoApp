@@ -32,15 +32,17 @@
                         </label>
                     </div>
 
-                    <div class="form-group mb-4"> 
-                    <label class="form-label fw-medium">Privacy Settings</label>
-                    <select class="form-select">
-                            <option selected>Private - Only me</option> 
-                            <option>Friends - Only people I choose</option> 
-                           <option>Public - Anyone with the link</option> 
-                        </select> 
-                    </div> 
-
+                    <div class="form-group mb-4">
+                        <label class="form-label fw-medium" for="PrivacySetting">Privacy Settings</label>
+                        <select class="form-select" asp-for="PrivacySetting">
+                            <option value="Private - Only me">Private - Only me</option>
+                            <option value="Friends - Only people I choose">Friends - Only people I choose</option>
+                            <option value="Public - Anyone with the link">Public - Anyone with the link</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i> Control who can view your uploaded photos
+                        </small>
+                    </div>
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary btn-lg">

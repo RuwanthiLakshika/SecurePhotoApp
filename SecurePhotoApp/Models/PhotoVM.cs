@@ -1,10 +1,9 @@
-﻿
-namespace SecurePhotoApp.Models
+﻿namespace SecurePhotoApp.Models
 {
     public class PhotoVM
     {
         public List<IFormFile> myFiles { get; set; }
-
+        public string PrivacySetting { get; set; } = "Private - Only me"; // Default privacy setting
     }
 
     public class PhotoItemVM
@@ -13,6 +12,7 @@ namespace SecurePhotoApp.Models
         public string Url { get; set; }
         public DateTime UploadDate { get; set; }
         public long Size { get; set; }
+        public string PrivacySetting { get; set; } = "Private - Only me"; // Add privacy setting property
 
         // Helper properties
         public string FileName => System.IO.Path.GetFileName(Name);
@@ -28,14 +28,12 @@ namespace SecurePhotoApp.Models
                     return $"{Size / (1024 * 1024):F1} MB";
             }
         }
-
         public string FormattedDate => UploadDate.ToString("MMMM dd, yyyy");
         public string TimeAgo
         {
             get
             {
                 var span = DateTime.Now - UploadDate;
-
                 if (span.TotalDays > 365)
                     return $"{(int)(span.TotalDays / 365)} year{((int)(span.TotalDays / 365) == 1 ? "" : "s")} ago";
                 if (span.TotalDays > 30)
@@ -46,7 +44,6 @@ namespace SecurePhotoApp.Models
                     return $"{(int)span.TotalHours} hour{((int)span.TotalHours == 1 ? "" : "s")} ago";
                 if (span.TotalMinutes > 1)
                     return $"{(int)span.TotalMinutes} minute{((int)span.TotalMinutes == 1 ? "" : "s")} ago";
-
                 return "Just now";
             }
         }
@@ -63,7 +60,4 @@ namespace SecurePhotoApp.Models
         public string SearchTerm { get; set; }
         public string SortOrder { get; set; }
     }
-
 }
-
-

@@ -3,6 +3,7 @@ using SecurePhotoApp.Models;
 using Azure.Storage.Blobs;
 using Azure.Identity;
 using Azure.Storage.Blobs.Models;
+using System.Text.Json;
 
 namespace SecurePhotoApp.Controllers
 {
@@ -21,7 +22,7 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";  
+                var username = User.Identity.Name ?? "user";
                 var uploadedUrls = new List<string>();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
@@ -36,9 +37,25 @@ namespace SecurePhotoApp.Controllers
                     var filename = GenerateFileName(file.FileName, username);
                     BlobClient blob = container.GetBlobClient(filename);
 
+                    // Create metadata with privacy setting
+                    var metadata = new Dictionary<string, string>
+                    {
+                        { "privacy", model.PrivacySetting ?? "Private - Only me" }
+                    };
+
+                    // Set the blob's metadata
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = file.ContentType
+                    };
+
                     using (var stream = file.OpenReadStream())
                     {
-                        await blob.UploadAsync(stream);
+                        await blob.UploadAsync(stream, new BlobUploadOptions
+                        {
+                            HttpHeaders = blobHttpHeaders,
+                            Metadata = metadata
+                        });
                     }
 
                     uploadedUrls.Add(blob.Uri.AbsoluteUri);
@@ -57,13 +74,13 @@ namespace SecurePhotoApp.Controllers
             try
             {
                 string[] strName = fileName.Split('.');
-                string extension = strName[^1]; 
+                string extension = strName[^1];
                 string newFileName = displayName + DateTime.UtcNow.ToString("yyyyMMdd\\THHmmssfff") + "." + extension;
                 return newFileName;
             }
             catch (Exception)
             {
-                return fileName; 
+                return fileName;
             }
         }
 
@@ -78,48 +95,53 @@ namespace SecurePhotoApp.Controllers
 
                 BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
 
-                var blobItems = new List<BlobItem>();
-                await foreach (var blobItem in container.GetBlobsAsync())
+                var photos = new List<PhotoItemVM>();
+                await foreach (var blobItem in container.GetBlobsAsync(BlobTraits.Metadata))
                 {
-                    blobItems.Add(blobItem);
+                    if (blobItem.Name.StartsWith(username))
+                    {
+                        var blobClient = container.GetBlobClient(blobItem.Name);
+
+                        // Get privacy setting from metadata
+                        string privacySetting = "Private - Only me"; // Default
+                        if (blobItem.Metadata.ContainsKey("privacy"))
+                        {
+                            privacySetting = blobItem.Metadata["privacy"];
+                        }
+
+                        photos.Add(new PhotoItemVM
+                        {
+                            Name = blobItem.Name,
+                            Url = blobClient.Uri.AbsoluteUri,
+                            UploadDate = blobItem.Properties.CreatedOn?.DateTime ?? DateTime.MinValue,
+                            Size = blobItem.Properties.ContentLength ?? 0,
+                            PrivacySetting = privacySetting
+                        });
+                    }
                 }
 
-                var userPhotos = blobItems.Where(b => b.Name.StartsWith(username));
-
+                // Apply search filter if provided
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    userPhotos = userPhotos.Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                    photos = photos.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
+                // Apply sorting
                 switch (sortOrder.ToLower())
                 {
                     case "oldest":
-                        userPhotos = userPhotos.OrderBy(b => b.Properties.CreatedOn);
+                        photos = photos.OrderBy(p => p.UploadDate).ToList();
                         break;
                     case "name":
-                        userPhotos = userPhotos.OrderBy(b => b.Name);
+                        photos = photos.OrderBy(p => p.Name).ToList();
                         break;
                     case "size":
-                        userPhotos = userPhotos.OrderByDescending(b => b.Properties.ContentLength);
+                        photos = photos.OrderByDescending(p => p.Size).ToList();
                         break;
                     case "newest":
                     default:
-                        userPhotos = userPhotos.OrderByDescending(b => b.Properties.CreatedOn);
+                        photos = photos.OrderByDescending(p => p.UploadDate).ToList();
                         break;
-                }
-
-                var photos = new List<PhotoItemVM>();
-                foreach (var blobItem in userPhotos)
-                {
-                    var blobClient = container.GetBlobClient(blobItem.Name);
-
-                    photos.Add(new PhotoItemVM
-                    {
-                        Name = blobItem.Name,
-                        Url = blobClient.Uri.AbsoluteUri,
-                        UploadDate = blobItem.Properties.CreatedOn?.DateTime ?? DateTime.MinValue,
-                        Size = blobItem.Properties.ContentLength ?? 0
-                    });
                 }
 
                 var model = new GalleryVM
@@ -166,6 +188,48 @@ namespace SecurePhotoApp.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdatePrivacy(string blobName, string privacySetting)
+        {
+            try
+            {
+                var username = User.Identity.Name ?? "user";
+
+                if (!blobName.StartsWith(username))
+                {
+                    return Forbid();
+                }
+
+                var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
+                BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+                BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+                BlobClient blob = container.GetBlobClient(blobName);
+
+                // Get current metadata
+                var properties = await blob.GetPropertiesAsync();
+                IDictionary<string, string> metadata = properties.Value.Metadata;
+
+                // Update privacy setting
+                if (metadata.ContainsKey("privacy"))
+                {
+                    metadata["privacy"] = privacySetting;
+                }
+                else
+                {
+                    metadata.Add("privacy", privacySetting);
+                }
+
+                // Set the updated metadata
+                await blob.SetMetadataAsync(metadata);
+
+                TempData["SuccessMessage"] = "Privacy settings updated successfully.";
+                return RedirectToAction("Gallery");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Failed to update privacy settings: " + ex.Message;
+                return RedirectToAction("Gallery");
+            }
+        }
     }
 }
-    
