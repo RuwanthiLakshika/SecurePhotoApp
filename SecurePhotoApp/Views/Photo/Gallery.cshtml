@@ -186,12 +186,16 @@
                                                 <i class="bi @GetPrivacyIcon(photo.PrivacySetting) me-1"></i>
                                                 @photo.PrivacySetting
                                             </span>
-                                            <button type="button" class="btn btn-sm btn-link ms-auto p-0 edit-privacy"
-                                                    data-bs-toggle="modal" data-bs-target="#privacyModal"
-                                                    data-blob-name="@photo.Name"
-                                                    data-current-privacy="@photo.PrivacySetting">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
+                                            @if (photo.IsOwner)
+                                            {
+                                                <button type="button" class="btn btn-sm btn-link ms-auto p-0 edit-privacy"
+                                                        data-bs-toggle="modal" data-bs-target="#privacyModal"
+                                                        data-blob-name="@photo.Name"
+                                                        data-current-privacy="@photo.PrivacySetting"
+                                                        data-authorized-friends="@(string.Join(",", photo.AuthorizedFriends))">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -220,12 +224,16 @@
                                         <div class="d-flex text-muted small mt-1">
                                             <span class="me-3"><i class="bi bi-clock me-1"></i>@photo.TimeAgo</span>
                                             <span><i class="bi bi-file-earmark me-1"></i>@photo.FormattedSize</span>
-                                            <button type="button" class="btn btn-sm btn-link ms-auto p-0 edit-privacy"
-                                                    data-bs-toggle="modal" data-bs-target="#privacyModal"
-                                                    data-blob-name="@photo.Name"
-                                                    data-current-privacy="@photo.PrivacySetting">
-                                                <i class="bi bi-pencil-square"></i> Edit Privacy
-                                            </button>
+                                            @if (photo.IsOwner)
+                                            {
+                                                <button type="button" class="btn btn-sm btn-link ms-auto p-0 edit-privacy"
+                                                        data-bs-toggle="modal" data-bs-target="#privacyModal"
+                                                        data-blob-name="@photo.Name"
+                                                        data-current-privacy="@photo.PrivacySetting"
+                                                        data-authorized-friends="@(string.Join(",", photo.AuthorizedFriends))">
+                                                    <i class="bi bi-pencil-square"></i> Edit Privacy
+                                                </button>
+                                            }
                                         </div>
                                     </div>
                                     <div class="flex-shrink-0">
@@ -236,10 +244,13 @@
                                             <a href="@photo.Url" download class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-outline-danger"
-                                                    onclick="confirmDelete('@photo.Name', '@photo.FileName')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            @if (photo.IsOwner)
+                                            {
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                        onclick="confirmDelete('@photo.Name', '@photo.FileName')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -273,7 +284,7 @@
     </div>
 </div>
 
-<!-- Add this privacy edit modal -->
+<!-- Updated privacy edit modal with friends email field -->
 <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -292,6 +303,16 @@
                             <option value="Friends - Only people I choose">Friends - Only people I choose</option>
                             <option value="Public - Anyone with the link">Public - Anyone with the link</option>
                         </select>
+                    </div>
+
+                    <!-- Friends Email Input - Hidden by default -->
+                    <div class="mb-3" id="friendEmailsContainer" style="display: none;">
+                        <label for="friendEmails" class="form-label">Friend Emails</label>
+                        <textarea class="form-control" id="friendEmails" name="friendEmails" rows="3"
+                                  placeholder="Enter email addresses separated by commas"></textarea>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i> Only these people will be able to view this photo
+                        </small>
                     </div>
 
                     <div class="privacy-explanation mt-3 p-3 rounded bg-light">
@@ -408,7 +429,7 @@
             deleteModal.show();
         }
 
-        // Handle privacy modal
+        // Handle privacy modal with friends email functionality
         document.addEventListener('DOMContentLoaded', function() {
             const privacyModal = document.getElementById('privacyModal');
             if (privacyModal) {
@@ -416,22 +437,40 @@
                     const button = event.relatedTarget;
                     const blobName = button.getAttribute('data-blob-name');
                     const currentPrivacy = button.getAttribute('data-current-privacy');
+                    const authorizedFriends = button.getAttribute('data-authorized-friends');
 
                     document.getElementById('privacyBlobName').value = blobName;
                     const privacySettingSelect = document.getElementById('privacySetting');
                     privacySettingSelect.value = currentPrivacy;
 
-                    // Show the correct explanation
-                    updatePrivacyExplanation(currentPrivacy);
+                    // Set friend emails if they exist
+                    const friendEmailsField = document.getElementById('friendEmails');
+                    if (authorizedFriends) {
+                        friendEmailsField.value = authorizedFriends;
+                    } else {
+                        friendEmailsField.value = '';
+                    }
+
+                    // Show friends emails field if appropriate
+                    updatePrivacyFields(currentPrivacy);
 
                     // Add listener for changes
                     privacySettingSelect.addEventListener('change', function() {
-                        updatePrivacyExplanation(this.value);
+                        updatePrivacyFields(this.value);
                     });
                 });
             }
 
-            function updatePrivacyExplanation(value) {
+            function updatePrivacyFields(value) {
+                // Show/hide friend emails field
+                const friendEmailsContainer = document.getElementById('friendEmailsContainer');
+                if (value === 'Friends - Only people I choose') {
+                    friendEmailsContainer.style.display = 'block';
+                } else {
+                    friendEmailsContainer.style.display = 'none';
+                }
+
+                // Update explanation visibility
                 document.getElementById('private-explanation').style.display = 'none';
                 document.getElementById('friends-explanation').style.display = 'none';
                 document.getElementById('public-explanation').style.display = 'none';

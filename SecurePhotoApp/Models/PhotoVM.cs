@@ -1,9 +1,14 @@
-﻿namespace SecurePhotoApp.Models
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+
+namespace SecurePhotoApp.Models
 {
     public class PhotoVM
     {
         public List<IFormFile> myFiles { get; set; }
         public string PrivacySetting { get; set; } = "Private - Only me"; // Default privacy setting
+        public List<string> FriendEmails { get; set; } = new List<string>(); // For friend-based access
     }
 
     public class PhotoItemVM
@@ -12,7 +17,9 @@
         public string Url { get; set; }
         public DateTime UploadDate { get; set; }
         public long Size { get; set; }
-        public string PrivacySetting { get; set; } = "Private - Only me"; // Add privacy setting property
+        public string PrivacySetting { get; set; } = "Private - Only me";
+        public bool IsOwner { get; set; } = false; // To determine if current user is the owner
+        public List<string> AuthorizedFriends { get; set; } = new List<string>(); // List of authorized friend emails
 
         // Helper properties
         public string FileName => System.IO.Path.GetFileName(Name);
