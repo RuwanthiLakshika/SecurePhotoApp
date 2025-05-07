@@ -284,7 +284,6 @@
     </div>
 </div>
 
-<!-- Updated privacy edit modal with friends email field -->
 <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -305,10 +304,9 @@
                         </select>
                     </div>
 
-                    <!-- Friends Email Input - Hidden by default -->
-                    <div class="mb-3" id="friendEmailsContainer" style="display: none;">
-                        <label for="friendEmails" class="form-label">Friend Emails</label>
-                        <textarea class="form-control" id="friendEmails" name="friendEmails" rows="3"
+                    <div class="mb-3" id="friendsUsernamesContainer" style="display: none;">
+                        <label for="friendUsernames" class="form-label">Friend Emails</label>
+                        <textarea class="form-control" id="friendUsernames" name="friendUsernames" rows="3"
                                   placeholder="Enter email addresses separated by commas"></textarea>
                         <small class="form-text text-muted">
                             <i class="bi bi-info-circle me-1"></i> Only these people will be able to view this photo
@@ -429,7 +427,6 @@
             deleteModal.show();
         }
 
-        // Handle privacy modal with friends email functionality
         document.addEventListener('DOMContentLoaded', function() {
             const privacyModal = document.getElementById('privacyModal');
             if (privacyModal) {
@@ -443,18 +440,15 @@
                     const privacySettingSelect = document.getElementById('privacySetting');
                     privacySettingSelect.value = currentPrivacy;
 
-                    // Set friend emails if they exist
-                    const friendEmailsField = document.getElementById('friendEmails');
+                    const friendUsernamesField = document.getElementById('friendEmails');
                     if (authorizedFriends) {
-                        friendEmailsField.value = authorizedFriends;
+                        friendUsernamesField.value = authorizedFriends;
                     } else {
-                        friendEmailsField.value = '';
+                        friendUsernamesField.value = '';
                     }
 
-                    // Show friends emails field if appropriate
                     updatePrivacyFields(currentPrivacy);
 
-                    // Add listener for changes
                     privacySettingSelect.addEventListener('change', function() {
                         updatePrivacyFields(this.value);
                     });
@@ -462,15 +456,13 @@
             }
 
             function updatePrivacyFields(value) {
-                // Show/hide friend emails field
-                const friendEmailsContainer = document.getElementById('friendEmailsContainer');
+                const friendUsernamesContainer = document.getElementById('friendEmailsContainer');
                 if (value === 'Friends - Only people I choose') {
-                    friendEmailsContainer.style.display = 'block';
+                    friendUsernamesContainer.style.display = 'block';
                 } else {
-                    friendEmailsContainer.style.display = 'none';
+                    friendUsernamesContainer.style.display = 'none';
                 }
 
-                // Update explanation visibility
                 document.getElementById('private-explanation').style.display = 'none';
                 document.getElementById('friends-explanation').style.display = 'none';
                 document.getElementById('public-explanation').style.display = 'none';
