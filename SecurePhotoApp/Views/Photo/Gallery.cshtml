@@ -429,7 +429,6 @@
             deleteModal.show();
         }
 
-        // Handle privacy modal with friends email functionality
         document.addEventListener('DOMContentLoaded', function() {
             const privacyModal = document.getElementById('privacyModal');
             if (privacyModal) {
@@ -443,7 +442,6 @@
                     const privacySettingSelect = document.getElementById('privacySetting');
                     privacySettingSelect.value = currentPrivacy;
 
-                    // Set friend emails if they exist
                     const friendEmailsField = document.getElementById('friendEmails');
                     if (authorizedFriends) {
                         friendEmailsField.value = authorizedFriends;
@@ -451,10 +449,8 @@
                         friendEmailsField.value = '';
                     }
 
-                    // Show friends emails field if appropriate
                     updatePrivacyFields(currentPrivacy);
 
-                    // Add listener for changes
                     privacySettingSelect.addEventListener('change', function() {
                         updatePrivacyFields(this.value);
                     });
@@ -462,7 +458,6 @@
             }
 
             function updatePrivacyFields(value) {
-                // Show/hide friend emails field
                 const friendEmailsContainer = document.getElementById('friendEmailsContainer');
                 if (value === 'Friends - Only people I choose') {
                     friendEmailsContainer.style.display = 'block';
@@ -470,7 +465,6 @@
                     friendEmailsContainer.style.display = 'none';
                 }
 
-                // Update explanation visibility
                 document.getElementById('private-explanation').style.display = 'none';
                 document.getElementById('friends-explanation').style.display = 'none';
                 document.getElementById('public-explanation').style.display = 'none';

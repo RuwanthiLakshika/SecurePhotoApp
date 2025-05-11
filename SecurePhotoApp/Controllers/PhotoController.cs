@@ -12,6 +12,13 @@ namespace SecurePhotoApp.Controllers
         private readonly string storageAccountName = "photostorageaccount";
         private readonly string containerName = "photocontainer";
 
+        private string GetUserEmail()
+        {
+            return User?.Claims?.FirstOrDefault(c => c.Type == "emails")?.Value
+                ?? User?.Claims?.FirstOrDefault(c => c.Type == "email")?.Value
+                ?? "unknown@example.com";
+        }
+
         public IActionResult Add()
         {
             return View();
@@ -22,7 +29,7 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";
+                var email = GetUserEmail();
                 var uploadedUrls = new List<string>();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
@@ -30,28 +37,29 @@ namespace SecurePhotoApp.Controllers
                 BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
 
                 BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+
                 await container.CreateIfNotExistsAsync();
 
                 foreach (var file in model.myFiles)
                 {
-                    var filename = GenerateFileName(file.FileName, username);
+                    var originalFileName = file.FileName;
+
+                    var filename = GenerateFileName(originalFileName, email);
+
                     BlobClient blob = container.GetBlobClient(filename);
 
-                    // Create metadata with privacy setting
                     var metadata = new Dictionary<string, string>
                     {
                         { "privacy", model.PrivacySetting ?? "Private - Only me" },
-                        { "owner", username }
+                        { "owner", email },
+                        { "original_filename", originalFileName } 
                     };
 
-                    // If friend emails are provided, store them in metadata
                     if (model.PrivacySetting == "Friends - Only people I choose" && model.FriendEmails != null)
                     {
-                        // Store as JSON array in metadata
                         metadata.Add("authorized_friends", JsonSerializer.Serialize(model.FriendEmails));
                     }
 
-                    // Set the blob's metadata
                     var blobHttpHeaders = new BlobHttpHeaders
                     {
                         ContentType = file.ContentType
@@ -77,13 +85,14 @@ namespace SecurePhotoApp.Controllers
             }
         }
 
-        private string GenerateFileName(string fileName, string displayName)
+        private string GenerateFileName(string fileName, string userEmail)
         {
             try
             {
                 string[] strName = fileName.Split('.');
                 string extension = strName[^1];
-                string newFileName = displayName + DateTime.UtcNow.ToString("yyyyMMdd\\THHmmssfff") + "." + extension;
+                string sanitizedEmail = userEmail.Replace("@", "_at_").Replace(".", "_");
+                string newFileName = sanitizedEmail + DateTime.UtcNow.ToString("yyyyMMdd\\THHmmssfff") + "." + extension;
                 return newFileName;
             }
             catch (Exception)
@@ -96,7 +105,7 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";
+                var email = GetUserEmail();
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
 
                 BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
@@ -106,103 +115,91 @@ namespace SecurePhotoApp.Controllers
                 var photos = new List<PhotoItemVM>();
                 await foreach (var blobItem in container.GetBlobsAsync(BlobTraits.Metadata))
                 {
-                    // Check if the user has access to this photo based on privacy settings
                     bool hasAccess = false;
-                    string privacySetting = "Private - Only me"; // Default
+                    string privacySetting = "Private - Only me";
 
                     if (blobItem.Metadata.ContainsKey("privacy"))
                     {
                         privacySetting = blobItem.Metadata["privacy"];
                     }
 
-                    // Check access permissions
                     if (privacySetting == "Public - Anyone with the link")
                     {
-                        // Public photos are visible to everyone
                         hasAccess = true;
                     }
                     else if (privacySetting == "Private - Only me")
                     {
-                        // Private photos are only visible to the owner
-                        if (blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == username)
+                        if (blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == email)
                         {
                             hasAccess = true;
                         }
                     }
                     else if (privacySetting == "Friends - Only people I choose")
                     {
-                        // Check if current user is the owner
-                        if (blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == username)
+                        if (blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == email)
                         {
                             hasAccess = true;
                         }
-                        // Check if current user is in the authorized friends list
                         else if (blobItem.Metadata.ContainsKey("authorized_friends"))
                         {
                             try
                             {
                                 var authorizedFriends = JsonSerializer.Deserialize<List<string>>(blobItem.Metadata["authorized_friends"]);
-                                if (authorizedFriends != null && authorizedFriends.Contains(username))
+                                if (authorizedFriends != null && authorizedFriends.Contains(email))
                                 {
                                     hasAccess = true;
                                 }
                             }
-                            catch { /* If JSON parsing fails, skip this blob */ }
+                            catch { }
                         }
                     }
 
-                    // Only add photos the user has access to
                     if (hasAccess)
                     {
                         var blobClient = container.GetBlobClient(blobItem.Name);
-
-                        // Get friends list for owner view
                         List<string> friendsList = new List<string>();
+
                         if (blobItem.Metadata.ContainsKey("authorized_friends"))
                         {
                             try
                             {
                                 friendsList = JsonSerializer.Deserialize<List<string>>(blobItem.Metadata["authorized_friends"]) ?? new List<string>();
                             }
-                            catch { /* If JSON parsing fails, use empty list */ }
+                            catch { }
+                        }
+
+                        string displayName = blobItem.Name;
+                        if (blobItem.Metadata.ContainsKey("original_filename"))
+                        {
+                            displayName = blobItem.Metadata["original_filename"];
                         }
 
                         photos.Add(new PhotoItemVM
                         {
                             Name = blobItem.Name,
+                            DisplayName = displayName,
                             Url = blobClient.Uri.AbsoluteUri,
                             UploadDate = blobItem.Properties.CreatedOn?.DateTime ?? DateTime.MinValue,
                             Size = blobItem.Properties.ContentLength ?? 0,
                             PrivacySetting = privacySetting,
-                            IsOwner = blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == username,
+                            IsOwner = blobItem.Metadata.ContainsKey("owner") && blobItem.Metadata["owner"] == email,
                             AuthorizedFriends = friendsList
                         });
                     }
                 }
 
-                // Apply search filter if provided
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    photos = photos.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                    photos = photos.Where(p => p.DisplayName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
-                // Apply sorting
-                switch (sortOrder.ToLower())
+                photos = sortOrder.ToLower() switch
                 {
-                    case "oldest":
-                        photos = photos.OrderBy(p => p.UploadDate).ToList();
-                        break;
-                    case "name":
-                        photos = photos.OrderBy(p => p.Name).ToList();
-                        break;
-                    case "size":
-                        photos = photos.OrderByDescending(p => p.Size).ToList();
-                        break;
-                    case "newest":
-                    default:
-                        photos = photos.OrderByDescending(p => p.UploadDate).ToList();
-                        break;
-                }
+                    "oldest" => photos.OrderBy(p => p.UploadDate).ToList(),
+                    "name" => photos.OrderBy(p => p.DisplayName).ToList(),
+                    "size" => photos.OrderByDescending(p => p.Size).ToList(),
+                    _ => photos.OrderByDescending(p => p.UploadDate).ToList(),
+                };
 
                 var model = new GalleryVM
                 {
@@ -224,22 +221,23 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";
+                var email = GetUserEmail();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
+
                 BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+
                 BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+
                 BlobClient blob = container.GetBlobClient(blobName);
 
-                // Get blob metadata to check ownership
                 var properties = await blob.GetPropertiesAsync();
-                if (properties.Value.Metadata.ContainsKey("owner") && properties.Value.Metadata["owner"] != username)
+                if (properties.Value.Metadata.ContainsKey("owner") && properties.Value.Metadata["owner"] != email)
                 {
                     return Forbid();
                 }
 
                 await blob.DeleteIfExistsAsync();
-
                 return RedirectToAction("Gallery");
             }
             catch (Exception ex)
@@ -253,43 +251,33 @@ namespace SecurePhotoApp.Controllers
         {
             try
             {
-                var username = User.Identity.Name ?? "user";
+                var email = GetUserEmail();
 
                 var serviceUri = new Uri($"https://{storageAccountName}.blob.core.windows.net");
+
                 BlobServiceClient blobServiceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+
                 BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
+
                 BlobClient blob = container.GetBlobClient(blobName);
 
-                // Get current metadata
                 var properties = await blob.GetPropertiesAsync();
                 IDictionary<string, string> metadata = properties.Value.Metadata;
 
-                // Check ownership
-                if (!metadata.ContainsKey("owner") || metadata["owner"] != username)
+                if (!metadata.ContainsKey("owner") || metadata["owner"] != email)
                 {
                     return Forbid();
                 }
 
-                // Update privacy setting
-                if (metadata.ContainsKey("privacy"))
-                {
-                    metadata["privacy"] = privacySetting;
-                }
-                else
-                {
-                    metadata.Add("privacy", privacySetting);
-                }
+                metadata["privacy"] = privacySetting;
 
-                // Remove old friends list if exists
                 if (metadata.ContainsKey("authorized_friends"))
                 {
                     metadata.Remove("authorized_friends");
                 }
 
-                // Add new friends list if applicable
                 if (privacySetting == "Friends - Only people I choose" && !string.IsNullOrWhiteSpace(friendEmails))
                 {
-                    // Parse comma-separated emails
                     var emails = friendEmails.Split(',', ';')
                         .Select(e => e.Trim())
                         .Where(e => !string.IsNullOrWhiteSpace(e))
@@ -301,7 +289,6 @@ namespace SecurePhotoApp.Controllers
                     }
                 }
 
-                // Set the updated metadata
                 await blob.SetMetadataAsync(metadata);
 
                 TempData["SuccessMessage"] = "Privacy settings updated successfully.";
