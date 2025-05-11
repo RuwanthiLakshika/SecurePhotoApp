@@ -27,7 +27,7 @@
                                 <p class="text-muted small">Supports JPG, PNG, GIF up to 10MB each</p>
                             </div>
                             <div class="selected-files-preview mt-3" id="selectedFiles">
-                             
+                                <!-- Preview thumbnails will appear here -->
                             </div>
                         </label>
                     </div>
@@ -44,10 +44,11 @@
                         </small>
                     </div>
 
-                    <div class="form-group mb-4" id="friendsUsernamesContainer" style="display: none;">
-                        <label class="form-label fw-medium" for="FriendUsernames">Friend Usernames</label>
-                        <textarea class="form-control" asp-for="FriendUsernames" rows="3"
-                                  placeholder="Enter usernames separated by commas"></textarea>
+                    <!-- Friends Email Input - Hidden by default -->
+                    <div class="form-group mb-4" id="friendsEmailsContainer" style="display: none;">
+                        <label class="form-label fw-medium" for="FriendEmails">Friend Emails</label>
+                        <textarea class="form-control" asp-for="FriendEmails" rows="3"
+                                  placeholder="Enter email addresses separated by commas"></textarea>
                         <small class="form-text text-muted">
                             <i class="bi bi-info-circle me-1"></i> Only these people will be able to view your photos
                         </small>
@@ -161,20 +162,23 @@
             const selectedFiles = document.getElementById('selectedFiles');
             const dropArea = document.querySelector('.file-drop-area');
             const privacySelector = document.getElementById('privacySelector');
-            const friendsUsernamesContainer = document.getElementById('friendsUsernamesContainer');
+            const friendsEmailsContainer = document.getElementById('friendsEmailsContainer');
 
+            // Show/hide friends emails input based on privacy setting
             privacySelector.addEventListener('change', function() {
                 if (this.value === 'Friends - Only people I choose') {
-                    friendsUsernamesContainer.style.display = 'block';
+                    friendsEmailsContainer.style.display = 'block';
                 } else {
-                    friendsUsernamesContainer.style.display = 'none';
+                    friendsEmailsContainer.style.display = 'none';
                 }
             });
 
+            // Check initial value on page load
             if (privacySelector.value === 'Friends - Only people I choose') {
-                friendsUsernamesContainer.style.display = 'block';
+                friendsEmailsContainer.style.display = 'block';
             }
 
+            // Highlight drop area when dragging files over it
             ['dragenter', 'dragover'].forEach(eventName => {
                 dropArea.addEventListener(eventName, highlight, false);
             });
@@ -193,6 +197,7 @@
                 dropArea.style.backgroundColor = '#f9fafb';
             }
 
+            // Preview selected files
             fileInput.addEventListener('change', function() {
                 selectedFiles.innerHTML = '';
                 if (this.files) {

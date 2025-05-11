@@ -8,7 +8,7 @@ namespace SecurePhotoApp.Models
     {
         public List<IFormFile> myFiles { get; set; }
         public string PrivacySetting { get; set; } = "Private - Only me"; // Default privacy setting
-        public List<string> FriendUsernames { get; set; } = new List<string>();
+        public List<string> FriendEmails { get; set; } = new List<string>(); // For friend-based access
     }
 
     public class PhotoItemVM
