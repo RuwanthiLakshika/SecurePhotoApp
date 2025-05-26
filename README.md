@@ -1,4 +1,18 @@
 # SecurePhotoApp
+Cloud-Based Secure Photo Sharing App – Built with Microsoft Azure
+This project is a Secure Photo Sharing Web Application developed using ASP.NET Core and Microsoft Azure services. It allows users to upload, manage, and securely share their photos with customized privacy settings.
+
+Key Features:
+- ASP.NET Core MVC framework
+- Authentication and user management via Azure AD B2C
+- Photo storage using Azure Blob Storage
+- Role-Based and Attribute-Based Access Control for secure sharing
+- Privacy options including public, private, and friend-specific sharing
+- Metadata-based access enforcement
+- Custom photo gallery with filtering and sorting capabilities
+- Fully hosted and integrated within the Azure cloud ecosystem
+
+This project showcases practical implementation of secure cloud application development, combining authentication, storage, and fine-grained access control within a modern web application.
 
 ![image](https://github.com/user-attachments/assets/a699cfe7-dedf-4fbd-89ff-6d8d4e9a016c)   
 
